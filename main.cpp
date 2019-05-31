@@ -275,20 +275,200 @@ string Abonat_Skype_Extern:: getInfo ()
     return tara;
 }
 
-class Abonat_Skype_: public Abonat_Skype /// Abonat_Skype_Romania / Abonat_Skype_Extern
+class Abonat_Skype_: public Abonat_Skype /// retine un Abonat_Skype_Romania sau un Abonat_Skype_Extern
 {
     string key, info;
 public:
-  /// methods implementation will be released after getting my mark
+    Abonat_Skype_  (int i /*= 0*/, string /*n = ""*/, int nr /*= 0*/, int is /*= 0*/, string k /*= ""*/, string inf /*= ""*/);// : Abonat_Skype (i, n, nr, is);
+    Abonat_Skype_ (const Abonat_Skype_ &other);// : Abonat_Skype (other);
+    Abonat_Skype_ (Abonat_Skype_Romania &other);// : Abonat_Skype (other);
+    Abonat_Skype_ (Abonat_Skype_Extern &other);// : Abonat_Skype (other);
+    ~Abonat_Skype_ ();
+    friend istream& operator>> (istream &in, Abonat_Skype_ &a);
+    friend ostream& operator<< (ostream &out, Abonat_Skype_ &a);
+    Abonat_Skype_& operator= (const Abonat_Skype_ &other);
+    Abonat_Skype_& operator= (Abonat_Skype_Romania &other);
+    Abonat_Skype_& operator= (Abonat_Skype_Extern &other);
 };
+Abonat_Skype_:: Abonat_Skype_  (int i = 0, string n = "", int nr = 0, int is = 0, string k = "", string inf = "") : Abonat_Skype (i, n, nr, is)
+{
+    key = k;
+    info = inf;
+}
+Abonat_Skype_:: Abonat_Skype_ (const Abonat_Skype_ &other) : Abonat_Skype (other)
+{
+    if (this != &other)
+    {
+        key = other.key;
+        info = other.info;
+    }
+}
+Abonat_Skype_:: Abonat_Skype_ (Abonat_Skype_Romania &other) : Abonat_Skype (other)
+{
+    key = "adresa de mail";
+    info = other.getInfo();
+}
+Abonat_Skype_:: Abonat_Skype_ (Abonat_Skype_Extern &other) : Abonat_Skype (other)
+{
+    key = "tara";
+    info = other.getInfo();
+}
+Abonat_Skype_:: ~Abonat_Skype_ ()
+{
+
+}
+istream& operator>> (istream &in, Abonat_Skype_ &a)
+{
+    Abonat_Skype &p = a;
+    in >> p;
+    return (in >> a.key >> a.info);
+}
+ostream& operator<< (ostream &out, Abonat_Skype_ &a)
+{
+    Abonat_Skype &p = a;
+    out << p;
+    return (out << ", " << a.key <<" - " <<  a.info);
+}
+Abonat_Skype_& Abonat_Skype_:: operator= (const Abonat_Skype_ &other)
+{
+    if (this != &other)
+    {
+        Abonat_Skype &p = *this;
+        p = other;
+        key = other.key;
+        info = other.info;
+    }
+    return *this;
+}
+Abonat_Skype_& Abonat_Skype_:: operator= (Abonat_Skype_Romania &other)
+{
+    Abonat_Skype &p = *this;
+    p = other;
+    key = "adresa de mail";
+    info = other.getInfo();
+    return *this;
+}
+Abonat_Skype_& Abonat_Skype_:: operator= (Abonat_Skype_Extern &other)
+{
+    Abonat_Skype &p = *this;
+    p = other;
+    key = "tara";
+    info = other.getInfo();
+    return *this;
+}
 
 class Agenda
 {
     Abonat_Skype_ info;
     Agenda *next;
 public:
-    /// methods implementation will be released after getting my mark
-}; 
+    Agenda (Abonat_Skype_ &i, Agenda *n /*= NULL*/);
+    Agenda (Abonat_Skype_Romania &i, Agenda *n /*= NULL*/);
+    Agenda (Abonat_Skype_Extern &i, Agenda *n /*= NULL*/);
+    Agenda (Agenda *other);
+    ~Agenda ();
+    Agenda& operator= (Agenda *other);
+    friend istream& operator>> (istream &in, Agenda &a);
+    friend istream& operator>> (istream &in, Agenda* &a);
+    friend ostream& operator<< (ostream &out, Agenda &a);
+    friend ostream& operator<< (ostream &out, Agenda* &a);
+    Agenda* operator[] (string index_nume);
+};
+Agenda:: Agenda (Abonat_Skype_ &i, Agenda *n = NULL)
+{
+    info = i;
+    next = n;
+}
+Agenda:: Agenda (Abonat_Skype_Romania &i, Agenda *n = NULL)
+{
+    info = i;
+    next = n;
+}
+Agenda:: Agenda (Abonat_Skype_Extern &i, Agenda *n = NULL)
+{
+    info = i;
+    next = n;
+}
+Agenda:: Agenda (Agenda *other)
+{
+    if (other != NULL)
+    {
+        this->info = other->info;
+        this->next = (other->next == NULL) ? NULL : new Agenda (other->next);
+    }
+    else
+    {
+        this->next = NULL;
+        Abonat_Skype_ a;
+        info = a;
+    }
+}
+Agenda:: ~Agenda ()
+{
+    if (this)
+    {
+        delete this->next;
+    }
+}
+Agenda& Agenda:: operator= (Agenda *other)
+{
+    if (this == NULL)
+    {
+        return *this;
+    }
+    else
+    {
+        delete this->next;
+    }
+    if (other != NULL)
+    {
+        this->info = other->info;
+        this->next = (other->next == NULL) ? NULL : new Agenda (other->next);
+    }
+    else
+    {
+        Abonat_Skype_ a;
+        this->info = a;
+        this->next = NULL;
+    }
+    return *this;
+}
+istream& operator>> (istream &in, Agenda &a)
+{
+    return (in >> a.info);
+}
+istream& operator>> (istream &in, Agenda* &a)
+{
+    delete a;
+    a = NULL;
+    int nr, ne;
+    in >> nr >> ne;
+    Abonat_Skype_Romania r;
+    Abonat_Skype_Extern e;
+    while (nr-- > 0)
+    {
+        in >> r;
+        a = new Agenda (r, a);
+    }
+    while (ne-- > 0)
+    {
+        in >> e;
+        a = new Agenda (e, a);
+    }
+    return in;
+}
+ostream& operator<< (ostream &out, Agenda &a)
+{
+    return (out << a.info);
+}
+ostream& operator<< (ostream &out, Agenda* &a)
+{
+    return (a == NULL) ? out : (out << *a << a->next);
+}
+Agenda* Agenda:: operator[] (string index_nume)
+{
+    return (this == NULL || this->info.getNume() == index_nume) ? this : (*this->next)[index_nume];
+}
 
 int main()
 {
